@@ -1,0 +1,36 @@
+{
+  "name": "henry-assistant-api",
+  "version": "1.0.0",
+  "description": "Henry Assistant API - Azure SQL + Express backend",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "test": "echo \"Add your tests here\" && exit 0"
+  },
+  "keywords": ["henry", "assistant", "azure", "sql", "express", "typescript", "backend"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@azure/functions": "^4.7.3",
+    "argon2": "^0.43.0",
+    "axios": "^1.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "morgan": "^1.10.0",
+    "mssql": "^11.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/mssql": "^9.1.7",
+    "@types/node": "^22.15.3",
+    "ts-node-dev": "^2.0.0"
+  }
+}

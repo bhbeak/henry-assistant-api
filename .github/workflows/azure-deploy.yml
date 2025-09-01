@@ -1,0 +1,96 @@
+name: Deploy Henry Assistant API to Azure App Service
+
+on:
+  push:
+    branches: [ test, main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+        - test
+        - production
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  determine-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:
+    - name: Determine deployment environment
+      id: set-env
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+        elif [ "${{ github.ref }}" = "refs/heads/test" ]; then
+          echo "environment=test" >> $GITHUB_OUTPUT
+        elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          echo "environment=production" >> $GITHUB_OUTPUT
+        else
+          echo "environment=test" >> $GITHUB_OUTPUT
+        fi
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: determine-environment
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    concurrency:
+      group: azure-deploy-${{ needs.determine-environment.outputs.environment }}
+      cancel-in-progress: true
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build TypeScript
+      run: npm run build
+
+    - name: Determine App Service name
+      id: app
+      run: |
+        env="${{ needs.determine-environment.outputs.environment }}"
+        case "$env" in
+          production)
+            echo "name=henry-assistant-api-prod" >> $GITHUB_OUTPUT
+            ;;
+          test)
+            echo "name=henry-assistant-api-test" >> $GITHUB_OUTPUT
+            ;;
+          *)
+            # default to test for any other envs
+            echo "name=henry-assistant-api-test" >> $GITHUB_OUTPUT
+            ;;
+        esac
+
+    - name: Archive build output
+      run: |
+        # Create deployment package with built files and node_modules
+        mkdir -p deployment
+        cp -r dist/* deployment/
+        cp package*.json deployment/
+        cd deployment
+        npm ci --production
+        zip -q -r ../api.zip .
+        cd ..
+
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ steps.app.outputs.name }}
+        publish-profile: ${{ needs.determine-environment.outputs.environment == 'production' && secrets.AZURE_API_PROD_PUBLISH_PROFILE || secrets.AZURE_API_TEST_PUBLISH_PROFILE }}
+        package: ./api.zip
