@@ -92,5 +92,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ steps.app.outputs.name }}
-        publish-profile: ${{ needs.determine-environment.outputs.environment == 'production' && secrets.AZURE_API_PROD_PUBLISH_PROFILE || secrets.AZURE_API_TEST_PUBLISH_PROFILE }}
+        publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
         package: ./api.zip
