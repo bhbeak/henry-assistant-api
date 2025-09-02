@@ -42,35 +42,30 @@ import { viewAsMiddleware } from './middleware/viewAsMiddleware';
 app.use(viewAsMiddleware);
 console.log('👁️ View As middleware enabled for admin impersonation');
 
-// Authentication Routes
-import userAuthRouter from './routes/userAuth';
-app.use('/api/user-auth', userAuthRouter);
-console.log('🔐 Mounting userAuthRouter at /api/user-auth');
-
 // Henry Assistant API Routes
 import conversationsRouter from './routes/conversations';
-app.use('/conversations', conversationsRouter);
-console.log('💬 Mounting conversationsRouter at /conversations');
+app.use('/api/conversations', conversationsRouter);
+console.log('💬 Mounting conversationsRouter at /api/conversations');
 
 import preferencesRouter from './routes/preferences';
-app.use('/preferences', preferencesRouter);
-console.log('⚙️ Mounting preferencesRouter at /preferences');
+app.use('/api/preferences', preferencesRouter);
+console.log('⚙️ Mounting preferencesRouter at /api/preferences');
 
 import promptsRouter from './routes/prompts';
-app.use('/prompts', promptsRouter);
-console.log('📝 Mounting promptsRouter at /prompts');
+app.use('/api/prompts', promptsRouter);
+console.log('📝 Mounting promptsRouter at /api/prompts');
 
 import usageRouter from './routes/usage';
-app.use('/usage', usageRouter);
-console.log('📊 Mounting usageRouter at /usage');
+app.use('/api/usage', usageRouter);
+console.log('📊 Mounting usageRouter at /api/usage');
 
 import adminRouter from './routes/admin';
-app.use('/admin', adminRouter);
-console.log('🛠️ Mounting adminRouter at /admin');
+app.use('/api/admin', adminRouter);
+console.log('🛠️ Mounting adminRouter at /api/admin');
 
 import usersRouter from './routes/users';
-app.use('/users', usersRouter);
-console.log('👤 Mounting usersRouter at /users');
+app.use('/api/users', usersRouter);
+console.log('👤 Mounting usersRouter at /api/users');
 
 // 2) Simple root check
 app.get('/', (_req, res) => {
