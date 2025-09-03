@@ -67,6 +67,23 @@ import usersRouter from './routes/users';
 app.use('/api/users', usersRouter);
 console.log('👤 Mounting usersRouter at /api/users');
 
+// Planning System Routes
+import conditionsRouter from './routes/conditions';
+app.use('/api/conditions', conditionsRouter);
+console.log('🎯 Mounting conditionsRouter at /api/conditions');
+
+import goalsRouter from './routes/goals';
+app.use('/api/goals', goalsRouter);
+console.log('📈 Mounting goalsRouter at /api/goals');
+
+import actionsRouter from './routes/actions';
+app.use('/api/actions', actionsRouter);
+console.log('✅ Mounting actionsRouter at /api/actions');
+
+import notesRouter from './routes/notes';
+app.use('/api/notes', notesRouter);
+console.log('📝 Mounting notesRouter at /api/notes');
+
 // 2) Simple root check
 app.get('/', (_req, res) => {
   res.send('API is up! 🚀');

@@ -154,9 +154,9 @@ We’ll add in more sections and Conditions of Life as we proceed, but for now, 
 - Document any breaking changes
 
 ### Deployment Strategy
-- **Always deploy to test environment first** - Never push directly to staging or production
+- **Always deploy to test environment first** - Never push directly to production
 - **Use combined commands** - Deploy and test in single operations where possible
-- **Follow promotion pipeline**: test → staging → production
+- **Follow promotion pipeline**: test → production
 - **Validate each environment** before promoting to the next
 - **Preserve meaningful commit messages** - Use proper merge strategies to maintain descriptive commit titles in GitHub Actions
 
@@ -168,21 +168,15 @@ When promoting changes through environments, use these approaches to maintain me
 # 1. Commit and push to test branch
 git add . && git commit -m "descriptive commit message" && git push origin test
 
-# 2. Get the original commit message and promote to staging
+# 2. Get the original commit message and promote to production
 COMMIT_MSG=$(git log --format=%B -n 1 HEAD)
-git checkout staging && git merge test --no-ff -m "$COMMIT_MSG" && git push origin staging
-
-# 3. Deploy to production with same message and return to test branch
-git checkout main && git merge staging --no-ff -m "$COMMIT_MSG" && git push origin main && git checkout test
+git checkout main && git merge test --no-ff -m "$COMMIT_MSG" && git push origin main && git checkout test
 ```
 
 **Alternative: Fast-forward merge (when possible)**
 ```bash
-# Promote to staging preserving commit history
-git checkout staging && git merge test --ff-only && git push origin staging
-
 # Promote to production preserving commit history  
-git checkout main && git merge staging --ff-only && git push origin main && git checkout test
+git checkout main && git merge test --ff-only && git push origin main && git checkout test
 ```
 
 **❌ Avoid using `--no-edit` without custom message:**
@@ -245,12 +239,9 @@ npm run type-check     # TypeScript type checking
 # Deploy to test environment first - push to test branch triggers workflow
 git add . && git commit -m "your descriptive change message" && git push origin test
 
-# Promote to staging preserving commit message
+# Promote to production preserving commit message
 COMMIT_MSG=$(git log --format=%B -n 1 HEAD)
-git checkout staging && git merge test --no-ff -m "$COMMIT_MSG" && git push origin staging
-
-# Deploy to production preserving commit message
-git checkout main && git merge staging --no-ff -m "$COMMIT_MSG" && git push origin main && git checkout test
+git checkout main && git merge test --no-ff -m "$COMMIT_MSG" && git push origin main && git checkout test
 ```
 
 **Investigation Principle**: Question every time-based filter - ask "What business rule requires this exclusion?" If there isn't one, it's likely an anti-pattern.

@@ -66,14 +66,14 @@ jobs:
         env="${{ needs.determine-environment.outputs.environment }}"
         case "$env" in
           production)
-            echo "name=henry-assistant-api-prod" >> $GITHUB_OUTPUT
+            echo "name=henry-prod-api" >> $GITHUB_OUTPUT
             ;;
           test)
-            echo "name=henry-assistant-api-test" >> $GITHUB_OUTPUT
+            echo "name=henry-test-api" >> $GITHUB_OUTPUT
             ;;
           *)
             # default to test for any other envs
-            echo "name=henry-assistant-api-test" >> $GITHUB_OUTPUT
+            echo "name=henry-test-api" >> $GITHUB_OUTPUT
             ;;
         esac
 
@@ -88,9 +88,15 @@ jobs:
         zip -q -r ../api.zip .
         cd ..
 
+    - name: Debug environment and secrets
+      run: |
+        echo "Environment: ${{ needs.determine-environment.outputs.environment }}"
+        echo "App name: ${{ steps.app.outputs.name }}"
+        echo "Publish profile exists: ${{ secrets.AZURE_PUBLISH_PROFILE != '' }}"
+
     - name: Deploy to Azure App Service
-      uses: azure/webapps-deploy@v2
+      uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ steps.app.outputs.name }}
-        publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
         package: ./api.zip

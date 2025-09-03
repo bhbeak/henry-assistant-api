@@ -114,7 +114,7 @@ pids
 *.pid.lock
 
 # IDE files
-.vscode/
+
 .idea/
 *.swp
 *.swo
