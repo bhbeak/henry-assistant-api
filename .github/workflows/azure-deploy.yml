@@ -88,6 +88,12 @@ jobs:
         zip -q -r ../api.zip .
         cd ..
 
+    - name: Debug environment and secrets
+      run: |
+        echo "Environment: ${{ needs.determine-environment.outputs.environment }}"
+        echo "App name: ${{ steps.app.outputs.name }}"
+        echo "Publish profile exists: ${{ secrets.AZURE_PUBLISH_PROFILE != '' }}"
+
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v3
       with:
